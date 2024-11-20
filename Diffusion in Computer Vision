@@ -1,0 +1,30 @@
+import numpy as np
+import cv2
+
+def diffusion_process(image, diffusion_coefficient, iterations):
+    height, width = image.shape[:2]
+    output = np.zeros_like(image)
+
+    for _ in range(iterations):
+        for i in range(1, height - 1):
+            for j in range(1, width - 1):
+                # Calculate the diffusion
+                output[i, j] = image[i, j] + diffusion_coefficient * (
+                    image[i-1, j] + image[i+1, j] + 
+                    image[i, j-1] + image[i, j+1] - 4 * image[i, j]
+                )
+        image = output.copy()
+    return output
+
+# Load an image
+image = cv2.imread('input_image.jpg', cv2.IMREAD_GRAYSCALE)
+
+# Parameters
+diffusion_coefficient = 0.25
+iterations = 10
+
+# Apply diffusion
+result = diffusion_process(image, diffusion_coefficient, iterations)
+
+# Save the result
+cv2.imwrite('output_image.jpg', result)
